@@ -10,14 +10,17 @@ return [
     'id' => 'app-backend',
     'basePath' => dirname(__DIR__),
     'controllerNamespace' => 'backend\controllers',
-  'bootstrap' => ['log'],
-   'modules' => [],
-   /* 'bootstrap' => ['simplechat'],
+    'bootstrap' => ['log'],
+
     'modules' => [
-        'simplechat' => [
-            'class' => 'bubasuma\simplechat\Module',
-            ],
-        ],*/
+
+        'files' => [
+            'class' => 'floor12\files\Module',
+            'storage' => '@app/storage',
+            'cache' => '@app/storage_cache',
+            'token_salt' => 'some_token_salt',
+        ],
+    ],
     'components' => [
         'request' => [
             'csrfParam' => '_csrf-backend',
@@ -27,6 +30,8 @@ return [
             'identityClass' => 'common\models\User',
             'enableAutoLogin' => true,
             'identityCookie' => ['name' => '_identity-backend', 'httpOnly' => true],
+            'loginUrl' => ['/site/start'],
+
         ],
         'session' => [
             // this is the name of the session cookie used for login on the backend
@@ -44,18 +49,27 @@ return [
         'errorHandler' => [
             'errorAction' => 'site/error',
         ],
-        
+
         'urlManager' => [
             'enablePrettyUrl' => true,
             'showScriptName' => false,
             'rules' => [
+
             ],
         ],
-        /*'view' => [
+        'urlManagerFrontEnd' => [
+
+            'class' => 'yii\web\urlManager',
+            'baseUrl' => 'http://julia/frontend/web/site/signup',
+            'enablePrettyUrl' => true,
+            'showScriptName' => false,
+
+        ],
+        'view' => [
             'class' => 'yii\web\View',
             'renderers' => [
                 'twig' => [
-                    'class' => 'yii\twig\ViewRenderer',
+                    'class' => yii\twig\ViewRenderer::class,
                     'cachePath' => '@runtime/Twig/cache',
                     // Array of twig options:
                     'options' => [
@@ -66,11 +80,19 @@ return [
                     ],
                     'uses' => ['yii\bootstrap'],
                 ],
-        
-    ],
 
-            ],*/
+            ],
 
+        ],
+
+        'timezoneDetector' => [
+            'class' => 'Dater\TimezoneDetector',
+        ],
     ],
+    'on ' . yii\base\Application::EVENT_BEFORE_REQUEST => function ($event) {
+        $clientTimezone = Yii::$app->timezoneDetector->getClientTimezone(); // часовой пояс пользователя
+        if (isset($clientTimezone)) Yii::$app->timeZone = $clientTimezone;
+    },
+
     'params' => $params,
 ];

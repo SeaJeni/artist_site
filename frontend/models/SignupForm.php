@@ -13,6 +13,10 @@ class SignupForm extends Model
     public $username;
     public $email;
     public $password;
+    /**
+     * @var mixed
+     */
+    public $telegram;
 
 
     /**
@@ -34,6 +38,8 @@ class SignupForm extends Model
 
             ['password', 'required'],
             ['password', 'string', 'min' => Yii::$app->params['user.passwordMinLength']],
+
+            ['telegram', 'string', 'min' => 2, 'max' => 25],
         ];
     }
 
@@ -54,7 +60,9 @@ class SignupForm extends Model
         $user->setPassword($this->password);
         $user->generateAuthKey();
         $user->generateEmailVerificationToken();
-        return $user->save() && $this->sendEmail($user);
+        $user->telegram = $this->telegram;
+        return $user->save() ;
+            //&& $this->sendEmail($user);
 
     }
 

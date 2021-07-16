@@ -8,18 +8,24 @@ use backend\models\Project;
 
 /**
  * ProjectSearch represents the model behind the search form of `backend\models\Project`.
+ * @property Customer $customer
+ * @property Type $type
  */
 class ProjectSearch extends Project
 {
+    public $type;
+    public $customer;
+
     /**
      * {@inheritdoc}
      */
     public function rules()
     {
         return [
-            [['id',  'type_id', 'manager_id', 'main_artist_id', 'artist_id', 'customer_id'], 'integer'],
-            [['name', 'stage_id','status', 'start_time', 'end_time', 'deadline', 'payment_status'], 'safe'],
-            [['cost'], 'number'],
+
+            [['name'], 'safe'],
+            [['cost'], 'double'],
+            [['type', 'customer'], 'safe'],
         ];
     }
 
@@ -42,12 +48,14 @@ class ProjectSearch extends Project
     public function search($params)
     {
         $query = Project::find();
-
+        $query->joinWith(['type']);
+        $query->joinWith(['customer']);
         // add conditions that should always apply here
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
         ]);
+
 
         $this->load($params);
 
@@ -57,26 +65,30 @@ class ProjectSearch extends Project
             return $dataProvider;
         }
 
+
         // grid filtering conditions
         $query->andFilterWhere([
             //'id' => $this->id,
-            'stage_id' => $this->stage_id,
-           
-            'type_id' => $this->type_id,
-            'manager_id' => $this->manager_id,
-            'main_artist_id' => $this->main_artist_id,
-            'artist_id' => $this->artist_id,
-            'start_time' => $this->start_time,
-            'end_time' => $this->end_time,
-            'deadline' => $this->deadline,
-            //'cost' => $this->cost,
-            'customer_id' => $this->customer_id,
-           
+            // 'stage_id' => $this->stage_id,
+
+            //'type_id' => $this->type_id,
+//            'manager_id' => $this->manager_id,
+//            'main_artist_id' => $this->main_artist_id,
+//            'artist_id' => $this->artist_id,
+//            'start_time' => $this->start_time,
+//            'end_time' => $this->end_time,
+//            'deadline' => $this->deadline,
+              'cost' => $this->cost,
+//            'customer_id' => $this->customer_id,
+
         ]);
 
+
         $query->andFilterWhere(['like', 'name', $this->name])
-            ->andFilterWhere(['like', 'status', $this->status])
-            ->andFilterWhere(['like', 'payment_status', $this->payment_status]);
+            //  ->andFilterWhere(['like', 'status', $this->status])
+            // ->andFilterWhere(['like', 'payment_status', $this->payment_status])
+            ->andFilterWhere(['like', Type::tableName() . '.name', $this->type])
+            ->andFilterWhere(['like', Customer::tableName() . '.last_name', $this->customer]);
 
         return $dataProvider;
     }

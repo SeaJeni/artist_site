@@ -9,7 +9,13 @@ $params = array_merge(
 return [
     'id' => 'app-console',
     'basePath' => dirname(__DIR__),
-    'bootstrap' => ['log'],
+    //'bootstrap' => ['log'],
+    'bootstrap' => ['log', 'simplechat'],
+    'modules' => [
+        'simplechat' => [
+            'class' => bubasuma\simplechat\Module::class,
+        ],
+    ],
     'controllerNamespace' => 'console\controllers',
     'aliases' => [
         '@bower' => '@vendor/bower-asset',

@@ -16,7 +16,7 @@ class m210429_105927_msg extends Migration
             'id' => $this->primaryKey(),
             'user_id' => $this->integer()->notNull(),
             'project_id' => $this->integer()->notNull(),
-            'msg' => $this->string()->notNull(),
+            'msg' => $this->string(),
             'date' => $this->timestamp()->notNull(),
                
            

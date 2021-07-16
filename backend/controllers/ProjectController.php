@@ -2,12 +2,15 @@
 
 namespace backend\controllers;
 
+use backend\models\User;
 use Yii;
 use backend\models\Project;
 use backend\models\ProjectSearch;
+use yii\filters\AccessControl;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+
 
 /**
  * ProjectController implements the CRUD actions for Project model.
@@ -26,6 +29,7 @@ class ProjectController extends Controller
                     'delete' => ['POST'],
                 ],
             ],
+
         ];
     }
 
@@ -38,6 +42,12 @@ class ProjectController extends Controller
         $searchModel = new ProjectSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
+        if(!Yii::$app->user->can('admin')) {
+
+            $user_id=Yii::$app->user->getId();
+            $dataProvider->query->where(['and','status=1',['or',"artist_id = $user_id", "main_artist_id = $user_id", "manager_id = $user_id"]]);
+        }
+        $dataProvider->sort = ['defaultOrder' => ['id' => 'DESC']];
         return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
@@ -62,9 +72,22 @@ class ProjectController extends Controller
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
+    public function getUsersIdByRoles($roles){
+
+        $usersId = Yii::$app->authManager->getUserIdsByRole($roles);// get id
+        $users = User::find()->where(['id' => $usersId])->all();
+
+        return $users;
+
+    }
+
     public function actionCreate()
     {
         $model = new Project();
+
+        $artist = $this->getUsersIdByRoles('artist');
+        $main_artist = $this->getUsersIdByRoles('main_artist');
+        $manager = $this->getUsersIdByRoles('manager');
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
@@ -72,6 +95,9 @@ class ProjectController extends Controller
 
         return $this->render('create', [
             'model' => $model,
+            'artist' => $artist,
+            'mainArtists' => $main_artist,
+            'manager' => $manager,
         ]);
     }
 
@@ -84,7 +110,12 @@ class ProjectController extends Controller
      */
     public function actionUpdate($id)
     {
+        if(Yii::$app->user->can('updateProjects'))
+        {
         $model = $this->findModel($id);
+        $artist = $this->getUsersIdByRoles('artist');
+        $main_artist = $this->getUsersIdByRoles('main_artist');
+        $manager = $this->getUsersIdByRoles('manager');
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
@@ -92,7 +123,15 @@ class ProjectController extends Controller
 
         return $this->render('update', [
             'model' => $model,
+            'artist' => $artist,
+            'mainArtists' => $main_artist,
+            'manager' => $manager,
         ]);
+        }
+
+        else{
+            return $this->redirect(['index']);
+        }
     }
 
     /**
@@ -104,9 +143,14 @@ class ProjectController extends Controller
      */
     public function actionDelete($id)
     {
+        if(Yii::$app->user->can('admin'))
+        {
         $this->findModel($id)->delete();
 
+
+        }
         return $this->redirect(['index']);
+
     }
 
     /**

@@ -15,7 +15,7 @@ class m210429_105611_project extends Migration
         $this->createTable('project', [
             'id' => $this->primaryKey(),
             'name' => $this->string()->notNull()->unique(),
-            'status'=>$this->boolean('false'),
+            'status'=>$this->boolean()->defaultValue(false),
             'stage_id' => $this->integer()->notNull(),
             'type_id' => $this->integer()->notNull(),
             'manager_id' => $this->integer()->notNull(),
@@ -26,6 +26,7 @@ class m210429_105611_project extends Migration
             'deadline'=> $this->timestamp()->notNull(),
             'cost' => $this->double()->notNull(),
             'customer_id' => $this->integer()->notNull(),
+            'payment_status'=> $this->boolean()->defaultValue(false),
         ]);
         
          $this->createIndex(//stage_id

@@ -8,17 +8,20 @@ use backend\models\PriceList;
 
 /**
  * PriceListSearch represents the model behind the search form of `backend\models\PriceList`.
+ *  * @property User $user
  */
 class PriceListSearch extends PriceList
 {
+    public $user;
     /**
      * {@inheritdoc}
      */
     public function rules()
     {
         return [
-            [['id', 'user_id', 'stage_id', 'type_id'], 'integer'],
-            [['price'], 'number'],
+           // [['id', 'user_id', 'stage_id', 'type_id'], 'integer'],
+           // [['price'], 'number'],
+            [['user'], 'safe'],
         ];
     }
 
@@ -41,7 +44,7 @@ class PriceListSearch extends PriceList
     public function search($params)
     {
         $query = PriceList::find();
-
+        $query->joinWith(['user']);
         // add conditions that should always apply here
 
         $dataProvider = new ActiveDataProvider([
@@ -64,7 +67,7 @@ class PriceListSearch extends PriceList
             'type_id' => $this->type_id,
             'price' => $this->price,
         ]);
-
+        $query->andFilterWhere(['like', User::tableName() . '.username', $this->user]);
         return $dataProvider;
     }
 }

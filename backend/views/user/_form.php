@@ -34,7 +34,7 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'avatar')->textInput(['maxlength' => true]) ?>
 
-    <?= $form->field($model, 'role_id')->textInput()->dropDownList(\yii\helpers\ArrayHelper::map(backend\models\Role::find()->all(),'id', 'name')) ?>
+    <?= $form->field($model, 'roles')->dropDownList($model->getRoleDropdown()) ?>
 
     <div class="form-group">
         <?= Html::submitButton('Save', ['class' => 'btn btn-success']) ?>

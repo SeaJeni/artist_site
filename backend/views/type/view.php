@@ -4,14 +4,14 @@ use yii\helpers\Html;
 use yii\widgets\DetailView;
 
 /* @var $this yii\web\View */
-/* @var $model backend\models\User */
+/* @var $model backend\models\Type */
 
-$this->title = $model->id;
-$this->params['breadcrumbs'][] = ['label' => 'Работники', 'url' => ['index']];
+$this->title = $model->name;
+$this->params['breadcrumbs'][] = ['label' => 'Types', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 \yii\web\YiiAsset::register($this);
 ?>
-<div class="user-view">
+<div class="type-view">
 
     <h1><?= Html::encode($this->title) ?></h1>
 
@@ -29,20 +29,9 @@ $this->params['breadcrumbs'][] = $this->title;
     <?= DetailView::widget([
         'model' => $model,
         'attributes' => [
-            'username',
-            'email:email',
 
-            ['attribute' => 'status',
-                'value' => $model->status == '9' ? 'Неподтвержденный' : 'Подтвержденный',
-            ],
+            'name',
 
-            'telegram',
-            'avatar',
-
-            ['attribute' => 'roles',
-                'value' => implode(',', $model->getRoles()),
-
-            ],
         ],
     ]) ?>
 

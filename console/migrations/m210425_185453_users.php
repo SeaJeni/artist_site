@@ -14,7 +14,7 @@ class m210425_185453_users extends Migration
     {
        $this->addColumn('user', 'telegram', $this->string());
        $this->addColumn('user', 'avatar', $this->string());
-       $this->addColumn('user', 'role_id', $this->integer()->notNull());
+
        
     }
 
@@ -25,7 +25,7 @@ class m210425_185453_users extends Migration
     {
         $this->dropColumn('user', 'telegram');
         $this->dropColumn('user', 'avatar');
-        $this->dropColumn('user', 'role_id');
+
         
         
     }

@@ -5,9 +5,13 @@ namespace backend\controllers;
 use Yii;
 use backend\models\Msg;
 use backend\models\MsgSearch;
+use yii\behaviors\TimestampBehavior;
+use yii\data\ActiveDataProvider;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use backend\models\Project;
+use yii\widgets\ListView;
 
 /**
  * MsgController implements the CRUD actions for Msg model.
@@ -26,6 +30,7 @@ class MsgController extends Controller
                     'delete' => ['POST'],
                 ],
             ],
+
         ];
     }
 
@@ -35,12 +40,27 @@ class MsgController extends Controller
      */
     public function actionIndex()
     {
+
         $searchModel = new MsgSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+
+        $projectDataProvider = new ActiveDataProvider([
+            'query' => Project::find(),
+
+        ]);
+        if (!Yii::$app->user->can('admin')) {
+
+            $user_id = Yii::$app->user->getId();
+            $projectDataProvider->query->where(['and', 'status=1', ['or', "project.artist_id = $user_id", "project.main_artist_id = $user_id", "project.manager_id = $user_id"]]);
+        }
+
+        $projectDataProvider->sort = ['defaultOrder' => ['id' => 'DESC']];
 
         return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
+            'projectDataProvider' => $projectDataProvider,
+
         ]);
     }
 
@@ -52,9 +72,33 @@ class MsgController extends Controller
      */
     public function actionView($id)
     {
-        return $this->render('view', [
-            'model' => $this->findModel($id),
+        $searchModel = new MsgSearch();
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $dataProvider->query->where("msg.project_id = $id");
+        $dataProvider->sort = ['defaultOrder' => ['id' => 'DESC']];
+        $projectDataProvider = new ActiveDataProvider([
+            'query' => Project::find(),
+
         ]);
+
+        if (!Yii::$app->user->can('admin')) {
+
+            $user_id = Yii::$app->user->getId();
+            $projectDataProvider->query->where(['and', 'status=1', ['or', "project.artist_id = $user_id", "project.main_artist_id = $user_id", "project.manager_id = $user_id"]]);
+        }
+        $projectDataProvider->sort = ['defaultOrder' => ['id' => 'DESC']];
+
+        $this->actionCreate();
+
+        return $this->render('view', [
+            'model' => new Msg(['project_id' => $id]),
+
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
+            'projectDataProvider' => $projectDataProvider,
+
+        ]);
+
     }
 
     /**
@@ -66,13 +110,18 @@ class MsgController extends Controller
     {
         $model = new Msg();
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+        if ($model->load(Yii::$app->request->post())) {
+
+            $model->user_id = Yii::$app->user->getId();
+            $model->project_id = Yii::$app->request->get('id');
+
         }
 
-        return $this->render('create', [
-            'model' => $model,
-        ]);
+        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+
+            return $this->redirect(['view', 'id' => $model->project_id]);
+        }
+
     }
 
     /**

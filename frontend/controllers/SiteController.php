@@ -154,8 +154,11 @@ class SiteController extends Controller
     {
         $model = new SignupForm();
         if ($model->load(Yii::$app->request->post()) && $model->signup()) {
-            Yii::$app->session->setFlash('success', 'Thank you for registration. Please check your inbox for verification email.');
-            return $this->goHome();
+            Yii::$app->session->setFlash('success', 'Вы успешно зарегистрированы!Пожалуйста, ожидайте верефикации вашего аккаунта.');
+          //  return $this->redirect('http://julia/frontend/web/site/index',301);
+           return $this->goHome();
+
+
         }
 
         return $this->render('signup', [

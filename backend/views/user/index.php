@@ -15,7 +15,7 @@ $this->params['breadcrumbs'][] = $this->title;
     <h1><?= Html::encode($this->title) ?></h1>
 
     <p>
-<!--        <? Html::a('Создать работника', ['create'], ['class' => 'btn btn-success']) ?>-->
+        <? //Html::a('Создать работника', ['create'], ['class' => 'btn btn-success']) ?>
     </p>
 
     <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
@@ -26,35 +26,30 @@ $this->params['breadcrumbs'][] = $this->title;
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
 
-            //'id',
             'username',
-            //'auth_key',
-            //'password_hash',
-            //'password_reset_token',
+
             'email:email',
-            //'status',
-            [ 'attribute'=> 'status',
-               'value' => function($data){
-                    return $data->status=='9'?'Неподтвержденный':'Подтвержденный';
+
+            ['attribute' => 'status',
+                'value' => function ($data) {
+                    return $data->status == '9' ? 'Неподтвержденный' : 'Подтвержденный';
 
                 },
                 'format' => 'html',
             ],
-            //'created_at',
-            //'updated_at',
-            //'verification_token',
-           'telegram',
-           'avatar',
-            //'role_id',
-            [ 'attribute'=>'role_id',
-                'value' => function($data){
-                    return $data->role->name;
 
+            'telegram',
+            'avatar',
+
+            ['attribute' => 'roles',
+                'value' => function ($data) {
+                    return implode(',', $data->getRoles());
                 },
                 'format' => 'html',
+                'label' => 'Роль',
             ],
-                        
-                        
+
+
             ['class' => 'yii\grid\ActionColumn'],
         ],
     ]); ?>

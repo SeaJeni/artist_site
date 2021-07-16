@@ -13,49 +13,75 @@ $this->params['breadcrumbs'][] = $this->title;
 <div class="price-list-index">
 
     <h1><?= Html::encode($this->title) ?></h1>
+    <?php if (Yii::$app->user->can('admin')): ?>
+        <p>
+            <?= Html::a('Создать прайс', ['create'], ['class' => 'btn btn-success']) ?>
+        </p>
 
-    <p>
-        <?= Html::a('Create Price List', ['create'], ['class' => 'btn btn-success']) ?>
-    </p>
+        <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
 
-    <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
+        <?= GridView::widget([
+            'dataProvider' => $dataProvider,
+            'filterModel' => $searchModel,
+            'columns' => [
+                ['class' => 'yii\grid\SerialColumn'],
 
-    <?= GridView::widget([
-        'dataProvider' => $dataProvider,
-        'filterModel' => $searchModel,
-        'columns' => [
-            ['class' => 'yii\grid\SerialColumn'],
 
-            //'id',
-            //'user_id',
-            [ 'attribute'=>'user_id',
-                'value' => function($data){
-                    return $data->user->username;
+                ['attribute' => 'user',
+                    'value' => function ($data) {
+                        return $data->user->username;
 
-                },
-                'format' => 'html',
+                    },
+                    'format' => 'html',
+                    'label' => 'Имя',
+                ],
+
+                ['attribute' => 'stage_id',
+                    'value' => function ($data) {
+                        return $data->stage->name;
+
+                    },
+                    'format' => 'html',
+
+                ],
+
+                ['attribute' => 'type_id',
+                    'value' => function ($data) {
+                        return $data->type->name;
+
+                    },
+                    'format' => 'html',
+                ],
+                'price',
+
+                ['class' => 'yii\grid\ActionColumn'],
             ],
-            //'stage_id',
-            [ 'attribute'=>'stage_id',
-                'value' => function($data){
-                    return $data->stage->name;
+        ]); ?>
+    <?php else: ?>
+        <?=
+        GridView::widget([
+            'dataProvider' => $dataProvider,
+            'columns' => [
+                ['class' => 'yii\grid\SerialColumn'],
 
-                },
-                'format' => 'html',
+                ['attribute' => 'stage_id',
+                    'value' => function ($data) {
+                        return $data->stage->name;
+                    },
+                    'format' => 'html',
+                ],
+
+                ['attribute' => 'type_id',
+                    'value' => function ($data) {
+                        return $data->type->name;
+                    },
+                    'format' => 'html',
+                ],
+
+                'price',
             ],
-            //'type_id',
-                  [ 'attribute'=>'type_id',
-                'value' => function($data){
-                    return $data->type->name;
-
-                },
-                'format' => 'html',
-            ],      
-            'price',
-
-            ['class' => 'yii\grid\ActionColumn'],
-        ],
-    ]); ?>
-
+        ]);
+        ?>
+    <?php endif; ?>
 
 </div>

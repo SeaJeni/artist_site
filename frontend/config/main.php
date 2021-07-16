@@ -10,12 +10,7 @@ return [
     'id' => 'app-frontend',
     'basePath' => dirname(__DIR__),
     'bootstrap' => ['log'],
-//    'bootstrap' => ['simplechat'],
-//    'modules' => [
-//        'simplechat' => [
-//            'class' => 'bubasuma\simplechat\Module',
-//            ],
-//        ],
+
     'controllerNamespace' => 'frontend\controllers',
     'components' => [
         'request' => [
@@ -42,14 +37,22 @@ return [
         'errorHandler' => [
             'errorAction' => 'site/error',
         ],
-        
+
         'urlManager' => [
             'enablePrettyUrl' => true,
             'showScriptName' => false,
             'rules' => [
             ],
         ],
-        
+
+        'urlManagerBackEnd' => [
+
+            'class' => 'yii\web\urlManager',
+            'baseUrl' => 'http://julia/backend/web/site/login',
+            'enablePrettyUrl' => true,
+            'showScriptName' => false,
+        ],
+
     ],
     'params' => $params,
 ];

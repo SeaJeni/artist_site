@@ -16,7 +16,7 @@ $this->createTable('customer', [
             'id' => $this->primaryKey(),
             'nickname' => $this->string(),
             'first_name' => $this->string(),
-            'last_name' => $this->string(),
+            'last_name' => $this->string()->notNull(),
             'email' => $this->string(),
             'country' => $this->string(),
             'url' => $this->string(),

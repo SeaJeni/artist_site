@@ -1,9 +1,13 @@
 <?php
 
+use backend\models\User;
 use yii\helpers\Html;
 
 /* @var $this yii\web\View */
 /* @var $model backend\models\Project */
+/* @var $artist User[] */
+/* @var $mainArtists User[] */
+/* @var $manager User[] */
 
 $this->title = 'Update Project: ' . $model->name;
 $this->params['breadcrumbs'][] = ['label' => 'Projects', 'url' => ['index']];
@@ -16,6 +20,10 @@ $this->params['breadcrumbs'][] = 'Update';
 
     <?= $this->render('_form', [
         'model' => $model,
+        'artist' => $artist,
+        'mainArtists' => $mainArtists,
+        'manager' => $manager,
     ]) ?>
+
 
 </div>

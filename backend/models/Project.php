@@ -4,6 +4,9 @@ namespace backend\models;
 
 use Yii;
 use yii\behaviors\TimestampBehavior;
+use yii\helpers\ArrayHelper;
+
+//use yii\behaviors\TimestampBehavior;
 /**
  * This is the model class for table "project".
  *
@@ -20,6 +23,7 @@ use yii\behaviors\TimestampBehavior;
  * @property string $deadline
  * @property float $cost
  * @property int $customer_id
+ * @property string $roles
  
  * 
  * @property Msg[] $msgs
@@ -29,12 +33,15 @@ use yii\behaviors\TimestampBehavior;
  * @property User $manager
  * @property Stage $stage
  * @property Type $type
+
  */
 class Project extends \yii\db\ActiveRecord
 {
     /**
      * {@inheritdoc}
      */
+
+
     public static function tableName()
     {
         return 'project';
@@ -52,10 +59,13 @@ class Project extends \yii\db\ActiveRecord
             [['cost'], 'number'],
             [['name','payment_status'], 'string', 'max' => 255],
             [['name'], 'unique'],
-            [['artist_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['artist_id' => 'id']],
             [['customer_id'], 'exist', 'skipOnError' => true, 'targetClass' => Customer::className(), 'targetAttribute' => ['customer_id' => 'id']],
+            [['artist_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['artist_id' => 'id']],
             [['main_artist_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['main_artist_id' => 'id']],
             [['manager_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['manager_id' => 'id']],
+//            [['artist_id'], 'safe'],
+//            [['main_artist_id'], 'safe'],
+//            [['manager_id'], 'safe'],
             [['stage_id'], 'exist', 'skipOnError' => true, 'targetClass' => Stage::className(), 'targetAttribute' => ['stage_id' => 'id']],
             [['type_id'], 'exist', 'skipOnError' => true, 'targetClass' => Type::className(), 'targetAttribute' => ['type_id' => 'id']],
         ];
@@ -84,27 +94,48 @@ class Project extends \yii\db\ActiveRecord
             
         ];
     }
-public function behaviors()
-    {
-        return [
-            //Использование поведения TimestampBehavior ActiveRecord
-            'timestamp' => [
-                'class' => TimestampBehavior::className(),
-                'attributes' => [
-                    \yii\db\BaseActiveRecord::EVENT_BEFORE_INSERT => ['start_time'],
-                    
+    public function behaviors()
+        {
+            return [
+                //Использование поведения TimestampBehavior ActiveRecord
+                'timestamp' => [
+                    'class' => TimestampBehavior::className(),
+                    'attributes' => [
+                        \yii\db\BaseActiveRecord::EVENT_BEFORE_INSERT => ['start_time'],
+
+
+                    ],
+                    //можно использовать 'value' => new \yii\db\Expression('NOW()'),
+                    'value' => function(){
+                                    return gmdate("Y-m-d");
+                    },
+
 
                 ],
-                //можно использовать 'value' => new \yii\db\Expression('NOW()'),
-                'value' => function(){
-                                return gmdate("Y-m-d H:i:s");
-                },
 
-
-            ],
-
-        ];
+            ];
     }
+//    public function getUsersIdByRoles($roles){
+//      return  $users = Yii::$app->authManager->getUserIdsByRole($roles);
+//
+//    }
+    public function getArtist(){
+      // $this->getUsersIdByRoles('artist');
+        return $this->hasOne(User::className(), ['id' => 'artist_id']);
+    }
+    public function getMainArtist(){
+
+    //  $users =  $this->getUsersIdByRoles('main_artist');
+      return $this->hasOne(User::class, ['id' => 'main_artist_id']);
+          //->andOnCondition(['id'=> $users]);
+
+    }
+    public function getManager(){
+      //  $this->getUsersIdByRoles('manager');
+        return $this->hasOne(User::className(), ['id' => 'manager_id']);
+    }
+
+
     /**
      * Gets query for [[Msgs]].
      *
@@ -120,10 +151,10 @@ public function behaviors()
      *
      * @return \yii\db\ActiveQuery
      */
-    public function getArtist()
-    {
-        return $this->hasOne(User::className(), ['id' => 'artist_id']);
-    }
+//    public function getArtist()
+//    {
+//        return $this->hasOne(User::className(), ['id' => 'artist_id']);
+//    }
 
     /**
      * Gets query for [[Customer]].
@@ -140,20 +171,20 @@ public function behaviors()
      *
      * @return \yii\db\ActiveQuery
      */
-    public function getMainArtist()
-    {
-        return $this->hasOne(User::className(), ['id' => 'main_artist_id']);
-    }
+//    public function getMainArtist()
+//    {
+//        return $this->hasOne(User::className(), ['id' => 'main_artist_id']);
+//    }
 
     /**
      * Gets query for [[Manager]].
      *
      * @return \yii\db\ActiveQuery
      */
-    public function getManager()
-    {
-        return $this->hasOne(User::className(), ['id' => 'manager_id']);
-    }
+//    public function getManager()
+//    {
+//        return $this->hasOne(User::className(), ['id' => 'manager_id']);
+//    }
 
     /**
      * Gets query for [[Stage]].
@@ -174,4 +205,6 @@ public function behaviors()
     {
         return $this->hasOne(Type::className(), ['id' => 'type_id']);
     }
+
+
 }

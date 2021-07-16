@@ -29,48 +29,48 @@ $this->params['breadcrumbs'][] = $this->title;
     <?= DetailView::widget([
         'model' => $model,
         'attributes' => [
-                       // 'id',
-            'name',
-            //'status',
-             [ 'attribute'=> 'status',
-               'value' => $model->status=='0'?'Закрыт':'Открыт',
 
-               
+            'name',
+
+            ['attribute' => 'status',
+                'value' => $model->status == '0' ? 'Закрыт' : 'Открыт',
+
+
             ],
-            //'stage_id',
-            [ 'attribute'=>'stage_id',
-                'value'=>$model->stage->name,
-            ], 
-            //'type_id',
-            [ 'attribute'=>'type_id',
-                'value'=>$model->type->name,
-            ], 
-            //'manager_id',
-            [ 'attribute'=>'manager_id',
-                'value'=>$model->manager->username,
-            ], 
-           // 'main_artist_id',
-            [ 'attribute'=>'main_artist_id',
-                'value'=>$model->mainArtist->username,
-            ], 
-           // 'artist_id',
-             [ 'attribute'=>'artist_id',
-                'value'=>$model->artist->username,
-            ], 
+
+            ['attribute' => 'stage_id',
+                'value' => $model->stage->name,
+            ],
+
+            ['attribute' => 'type_id',
+                'value' => $model->type->name,
+            ],
+
+            ['attribute' => 'manager_id',
+                'value' => $model->manager->username,
+            ],
+
+            ['attribute' => 'main_artist_id',
+                'value' => $model->mainArtist->username,
+            ],
+
+            ['attribute' => 'artist_id',
+                'value' => $model->artist->username,
+            ],
+
             'start_time',
             'end_time',
             'deadline',
             'cost',
-            //'customer_id',
-             [ 'attribute'=>'customer_id',
-                'value'=>$model->customer->last_name,
-            ], 
 
-            //'payment_status',
-             [ 'attribute'=> 'payment_status',
-               'value' => $model->payment_status=='0'?'Не оплачен':'Оплачен',
+            ['attribute' => 'customer_id',
+                'value' => $model->customer->last_name,
+            ],
 
-               
+
+            ['attribute' => 'payment_status',
+                'value' => $model->payment_status == '0' ? 'Не оплачен' : 'Оплачен',
+
             ],
         ],
     ]) ?>

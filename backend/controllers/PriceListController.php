@@ -37,6 +37,13 @@ class PriceListController extends Controller
     {
         $searchModel = new PriceListSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        if(!Yii::$app->user->can('admin')) {
+
+            $user_id=Yii::$app->user->getId();
+            $dataProvider->query->where("user_id = $user_id");
+        }
+
+        $dataProvider->sort = ['defaultOrder' => ['id' => 'DESC']];
 
         return $this->render('index', [
             'searchModel' => $searchModel,

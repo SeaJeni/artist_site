@@ -14,12 +14,20 @@
     },
     "minimum-stability": "stable",
     "require": {
-        "php": ">=5.6.0",
+        "php": ">=7.4",
         "yiisoft/yii2": "~2.0.14",
         "yiisoft/yii2-bootstrap": "~2.0.0",
         "yiisoft/yii2-swiftmailer": "~2.0.0 || ~2.1.0",
-        "bubasuma/yii2-simplechat": "^2.0",
-        "yiisoft/yii2-twig": "^2.3"
+
+        "yiisoft/yii2-twig": "^2.3",
+        "bower-asset/twig.js": "^1.15",
+        "2amigos/yii2-tinymce-widget": "~1.1",
+
+        "mihaildev/yii2-elfinder": "*",
+        "floor12/yii2-module-files": "^1.2",
+        "kartik-v/yii2-widget-datepicker": "@dev",
+        "dater/dater": "^2.0"
+
         
     },
     "require-dev": {
@@ -37,7 +45,11 @@
         "process-timeout": 1800,
         "fxp-asset": {
             "enabled": false
+        },
+        "github-oauth": {
+            "github.com": "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"
         }
+
     },
     "repositories": [
         {
